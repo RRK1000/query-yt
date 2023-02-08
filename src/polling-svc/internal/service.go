@@ -18,11 +18,13 @@ type Service interface {
 
 const (
 	// Google APIs
-	developerKey = "AIzaSyDJ-7c8MCxZ43wRuIPSHONQyE-eChGkBP8"
+	developerKey = "AIzaSyDJ-7c8MCxZ43wRuIPSHONQyE-eChGkBP8" // for demo
 
 	// Mongo
 	db         = "yt"
 	collection = "videoinfo"
+	username   = "root" 
+	password   = "root123" // for demo
 )
 
 type VideoInfo struct {
@@ -44,7 +46,7 @@ func InitPollingSvc() Service {
 		context.Background(),
 		options.Client().
 			ApplyURI(getMongoConnStr()).
-			SetAuth(options.Credential{Username: "root", Password: "root123"}),
+			SetAuth(options.Credential{Username: username, Password: password}),
 	)
 	if err != nil {
 		panic(err)
@@ -87,7 +89,7 @@ func (p *PollingServer) PollYTApi(ctx context.Context) {
 	}
 	err = p.postVideoInfo(ctx, vList)
 	if err != nil {
-		return
+		log.Println(err)
 	}
 }
 
