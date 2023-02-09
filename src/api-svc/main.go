@@ -17,13 +17,11 @@ func main() {
 
 	r := mux.NewRouter()
 	svc := service.NewHTTPServer()
-
-	r.HandleFunc("/api/v1/videoinfo", svc.GetVideoInfo).Methods("GET")
-	r.HandleFunc("/api/v1/video", svc.SearchVideo).Methods("GET")
+	service.SetupRoutes(r, svc)
 
 	log.Println("Started server at", *httpAddr)
 	err := http.ListenAndServe(*httpAddr, r)
 	if err != nil {
-		log.Fatalln("There's an error with the server", err)
+		log.Fatalln("error while starting the server. ", err)
 	}
 }
