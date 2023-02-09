@@ -1,7 +1,5 @@
 # src
 
-## Component Diagram
-
 ## Services
 
 ### api-svc
