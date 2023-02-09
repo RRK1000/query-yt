@@ -19,6 +19,7 @@ func main() {
 	svc := service.NewHTTPServer()
 
 	r.HandleFunc("/api/v1/videoinfo", svc.GetVideoInfo).Methods("GET")
+	r.HandleFunc("/api/v1/video", svc.SearchVideo).Methods("GET")
 
 	log.Println("Started server at", *httpAddr)
 	err := http.ListenAndServe(*httpAddr, r)

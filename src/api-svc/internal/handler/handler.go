@@ -18,10 +18,10 @@ type APIServer struct {
 }
 
 type VideoInfo struct {
-	Title              string
-	Description        string
-	PublishingDatetime string
-	Thumbnail          youtube.ThumbnailDetails
+	Title              string                   `bson:"title"`
+	Description        string                   `bson:"description"`
+	PublishingDatetime string                   `bson:"publishingdatetime"`
+	Thumbnail          youtube.ThumbnailDetails `bson:"thumbnail"`
 }
 
 func (s *APIServer) GetVideoInfo(w http.ResponseWriter, r *http.Request) {
@@ -38,6 +38,7 @@ func (s *APIServer) GetVideoInfo(w http.ResponseWriter, r *http.Request) {
 		maxResults, err = strconv.ParseInt(maxResultsQueryParam, 10, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			return
 		}
 	}
 	offsetQueryParam := r.URL.Query().Get("offset")
@@ -45,6 +46,7 @@ func (s *APIServer) GetVideoInfo(w http.ResponseWriter, r *http.Request) {
 		offset, err = strconv.ParseInt(offsetQueryParam, 10, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			return
 		}
 	}
 
@@ -56,12 +58,37 @@ func (s *APIServer) GetVideoInfo(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	w.WriteHeader(http.StatusBadRequest)
+	w.WriteHeader(http.StatusOK)
 	res, _ := json.Marshal(results)
 	w.Write(res)
+}
 
-	// for _, result := range results {
-	// 	res, _ := json.Marshal(result)
-	// 	fmt.Println(string(res))
-	// }
+func (s *APIServer) SearchVideo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	titleQueryParam := r.FormValue("title")
+	descQueryParam := r.FormValue("description")
+	var filter bson.D
+	if titleQueryParam == "" {
+		filter = bson.D{
+			{Key: "$text", Value: bson.D{{Key: "$search", Value: descQueryParam}}},
+		}
+	} else if descQueryParam == "" {
+		filter = bson.D{
+			{Key: "title", Value: titleQueryParam},
+		}
+	} else {
+		filter = bson.D{
+			{Key: "title", Value: titleQueryParam},
+			{Key: "$text", Value: bson.D{{Key: "$search", Value: descQueryParam}}},
+		}
+	}
+
+	opts := options.FindOne()
+	var result VideoInfo
+	_ = s.MongoCollection.FindOne(context.Background(), filter, opts).Decode(&result)
+
+	w.WriteHeader(http.StatusOK)
+	res, _ := json.Marshal(result)
+	w.Write(res)
 }
