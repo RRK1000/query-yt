@@ -13,5 +13,19 @@ services:
       - mongo-volume:/data/db
     ports:
       - 27017:27017
+  
+  polling-svc:
+    container_name: polling-svc
+    build: ./src/polling-svc
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+  
+  api-svc:
+    container_name: api-svc
+    build: ./src/api-svc
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+    ports:
+      - 8000:8000
 volumes:
   mongo-volume:
