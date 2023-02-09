@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"github.com/gorilla/mux"
 	"github.com/query-yt/src/api-svc/internal/handler"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -31,4 +32,9 @@ func NewHTTPServer() *handler.APIServer {
 	return &handler.APIServer{
 		MongoCollection: mongoCollection,
 	}
+}
+
+func SetupRoutes(r *mux.Router, svc *handler.APIServer) {
+	r.HandleFunc("/api/v1/videoinfo", svc.GetVideoInfo).Methods("GET")
+	r.HandleFunc("/api/v1/video", svc.SearchVideo).Methods("GET")
 }
