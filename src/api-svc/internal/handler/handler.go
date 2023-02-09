@@ -55,7 +55,7 @@ func (s *APIServer) GetVideoInfo(w http.ResponseWriter, r *http.Request) {
 	cursor, _ := s.MongoCollection.Find(context.Background(), filter, opts)
 	var results []VideoInfo
 	if err := cursor.All(context.Background(), &results); err != nil {
-		log.Println(err)
+		log.Println("error while parsing result: ", err)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
