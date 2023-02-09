@@ -18,21 +18,21 @@ type Service interface {
 
 const (
 	// Google APIs
-	developerKey = "AIzaSyDJ-7c8MCxZ43wRuIPSHONQyE-eChGkBP8" // for demo
+	developerKey = "AIzaSyDPgQh6_v-1-8UXyj3OB4-mE40zX9y19ic" // for demo
 
 	// Mongo
 	db         = "yt"
 	collection = "videoinfo"
-	username   = "root" 
+	username   = "root"
 	password   = "root123" // for demo
 )
 
 type VideoInfo struct {
-	VideoId            string `bson:"_id"`
-	Title              string
-	Description        string
-	PublishingDatetime string
-	Thumbnail          youtube.ThumbnailDetails
+	VideoId            string                   `bson:"_id"`
+	Title              string                   `bson:"title"`
+	Description        string                   `bson:"description"`
+	PublishingDatetime string                   `bson:"publishingdatetime"`
+	Thumbnail          youtube.ThumbnailDetails `bson:"thumbnail"`
 }
 
 type PollingServer struct {
@@ -70,9 +70,11 @@ func InitPollingSvc() Service {
 
 func (p *PollingServer) PollYTApi(ctx context.Context) {
 	call := p.YtSvc.Search.List([]string{"id", "snippet"}).
-		MaxResults(10)
+		Q("football").
+		MaxResults(20)
 	response, err := call.Do()
 	if err != nil {
+		log.Println(err)
 		return
 	}
 
@@ -94,9 +96,11 @@ func (p *PollingServer) PollYTApi(ctx context.Context) {
 }
 
 func (p *PollingServer) postVideoInfo(ctx context.Context, vList []interface{}) error {
-	_, err := p.MongoCollection.InsertMany(ctx, vList)
-	if err != nil {
-		return err
+	for _, vInfo := range vList {
+		_, err := p.MongoCollection.InsertOne(ctx, vInfo, &options.InsertOneOptions{})
+		if err != nil {
+			continue
+		}
 	}
 	return nil
 }
