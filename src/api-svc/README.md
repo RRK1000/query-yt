@@ -1,7 +1,7 @@
 # api-svc
 
-1. Paginated Video Info
-2. Search Video
+1. [Paginated Video Info](https://github.com/RRK1000/query-yt/tree/docs/src/api-svc#get-apiv1videoinfo)
+2. [Search Video](https://github.com/RRK1000/query-yt/tree/docs/src/api-svc#get-apiv1videoinfo)
 
 ## GET api/v1/videoinfo
 #### Example Request
