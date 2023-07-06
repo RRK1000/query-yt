@@ -1,4 +1,5 @@
 # query-yt
+A demo project that polls the Youtube API and stores video information, built with Go & Docker.
 
 # Running and Building 
 ```
