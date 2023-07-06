@@ -18,13 +18,13 @@ type Service interface {
 
 const (
 	// Google APIs
-	developerKey = "AIzaSyDPgQh6_v-1-8UXyj3OB4-mE40zX9y19ic" // for demo
+	developerKey = "<>" 
 
 	// Mongo
 	db         = "yt"
 	collection = "videoinfo"
 	username   = "root"
-	password   = "root123" // for demo
+	password   = "root123" 
 )
 
 type VideoInfo struct {
